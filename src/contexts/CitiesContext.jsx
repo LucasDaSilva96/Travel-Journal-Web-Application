@@ -1,23 +1,76 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import CITIES from "../data/Data";
 
 const CitiesContext = createContext();
 
+const initialState = {
+  cities: [],
+  isLoading: false,
+  currentCity: {},
+  error: "",
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case "loading":
+      return {
+        ...state,
+        isLoading: true,
+      };
+
+    case "cities/loaded":
+      return {
+        ...state,
+        cities: action.payload,
+        isLoading: false,
+      };
+
+    case "city/loaded":
+      return {
+        ...state,
+        isLoading: false,
+        currentCity: action.payload,
+      };
+
+    case "city/created":
+      return {
+        ...state,
+        isLoading: false,
+        cities: [...state.cities, action.payload],
+        currentCity: action.payload,
+      };
+
+    case "city/deleted":
+      return {
+        ...state,
+        isLoading: false,
+        cities: [...action.payload],
+        currentCity: {},
+      };
+
+    default:
+      return {
+        ...state,
+        error: "Unknown action type",
+      };
+  }
+}
+
 function CitiesProvider({ children }) {
-  const [cities, setCities] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentCity, setCurrentCity] = useState({});
+  const [{ cities, isLoading, currentCity }, dispatch] = useReducer(
+    reducer,
+    initialState
+  );
 
   useEffect(function () {
-    function fethCity() {
-      setIsLoading(true);
-      setCities(CITIES);
+    function fetchCity() {
+      dispatch({ type: "loading" });
 
       setTimeout(() => {
-        setIsLoading(false);
+        dispatch({ type: "cities/loaded", payload: CITIES });
       }, 1500);
     }
-    fethCity();
+    fetchCity();
   }, []);
 
   function getCity(id) {
@@ -28,11 +81,30 @@ function CitiesProvider({ children }) {
       ID = Number(id);
     }
 
-    setIsLoading(true);
+    if (Object.keys(currentCity).length > 0) {
+      if (currentCity.id.toString() === id) {
+        const data = cities.find((el) => el.id === ID);
+        dispatch({ type: "city/loaded", payload: data });
+        return;
+      }
+    }
+
+    dispatch({ type: "loading" });
     const data = cities.find((el) => el.id === ID);
-    setCurrentCity(data);
     setTimeout(() => {
-      setIsLoading(false);
+      dispatch({ type: "city/loaded", payload: data });
+    }, 1500);
+  }
+
+  function deleteCity(id) {
+    dispatch({ type: "loading" });
+
+    const citiesArray = cities.filter(
+      (city) => city.id.toString() !== id.toString()
+    );
+
+    setTimeout(() => {
+      dispatch({ type: "city/deleted", payload: citiesArray });
     }, 1500);
   }
 
@@ -43,7 +115,8 @@ function CitiesProvider({ children }) {
         isLoading,
         currentCity,
         getCity,
-        setCities,
+        deleteCity,
+        dispatch,
       }}
     >
       {children}
@@ -58,8 +131,4 @@ function useCities() {
   return context;
 }
 
-function createCity(newCity) {
-  return CITIES.push(newCity);
-}
-
-export { CitiesProvider, useCities, createCity };
+export { CitiesProvider, useCities };

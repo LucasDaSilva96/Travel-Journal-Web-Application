@@ -28,7 +28,6 @@ function City() {
     [id]
   );
 
-  console.log(currentCity);
   const { cityName, emoji, date, notes } = currentCity;
 
   if (isLoading) return <Spinner />;

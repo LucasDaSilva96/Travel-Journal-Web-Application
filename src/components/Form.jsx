@@ -9,7 +9,7 @@ import useUrlPosition from "../hooks/useUrlPosition";
 import Message from "./Message";
 import Spinner from "./Spinner";
 import DatePicker from "react-datepicker";
-import { createCity, useCities } from "../contexts/CitiesContext";
+import { useCities } from "../contexts/CitiesContext";
 
 export function convertToEmoji(countryCode) {
   const codePoints = countryCode
@@ -20,7 +20,7 @@ export function convertToEmoji(countryCode) {
 }
 
 function Form() {
-  const { cities, setCities, isLoading } = useCities();
+  const { dispatch, isLoading } = useCities();
   const navigate = useNavigate();
 
   const [isLoadingGeocoding, setIsLoadingGeocode] = useState(false);
@@ -81,12 +81,11 @@ function Form() {
       position: { lat, lng },
       id: crypto.randomUUID(),
     };
-    setCities((values) => [...values, newCity]);
-    createCity(newCity);
+    dispatch({ type: "loading" });
     setTimeout(() => {
+      dispatch({ type: "city/created", payload: newCity });
       navigate("/app/cities");
     }, 1000);
-    console.log(cities);
   }
 
   if (isLoadingGeocoding) return <Spinner />;

@@ -1,4 +1,4 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Map.module.css";
 import {
   MapContainer,
@@ -15,7 +15,7 @@ import Button from "./Button";
 import useUrlPosition from "../hooks/useUrlPosition";
 
 function Map() {
-  const { cities } = useCities();
+  const { cities, currentCity } = useCities();
   const {
     isLoading: isLoadingPosition,
     position: geolocationPosition,
