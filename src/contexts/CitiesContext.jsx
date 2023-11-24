@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 import CITIES from "../data/Data";
 
 const CitiesContext = createContext();
@@ -73,28 +79,31 @@ function CitiesProvider({ children }) {
     fetchCity();
   }, []);
 
-  function getCity(id) {
-    let ID;
-    if (isNaN(id)) {
-      ID = id;
-    } else {
-      ID = Number(id);
-    }
-
-    if (Object.keys(currentCity).length > 0) {
-      if (currentCity.id.toString() === id) {
-        const data = cities.find((el) => el.id === ID);
-        dispatch({ type: "city/loaded", payload: data });
-        return;
+  const getCity = useCallback(
+    (id) => {
+      let ID;
+      if (isNaN(id)) {
+        ID = id;
+      } else {
+        ID = Number(id);
       }
-    }
 
-    dispatch({ type: "loading" });
-    const data = cities.find((el) => el.id === ID);
-    setTimeout(() => {
-      dispatch({ type: "city/loaded", payload: data });
-    }, 1500);
-  }
+      if (Object.keys(currentCity).length > 0) {
+        if (currentCity.id.toString() === id) {
+          const data = cities.find((el) => el.id === ID);
+          dispatch({ type: "city/loaded", payload: data });
+          return;
+        }
+      }
+
+      dispatch({ type: "loading" });
+      const data = cities.find((el) => el.id === ID);
+      setTimeout(() => {
+        dispatch({ type: "city/loaded", payload: data });
+      }, 1500);
+    },
+    [currentCity, cities]
+  );
 
   function deleteCity(id) {
     dispatch({ type: "loading" });
