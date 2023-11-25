@@ -52,8 +52,7 @@
 
 ## Skills Demonstrated:
 
--Frontend development using React, including state management and routing.
-
+- Frontend development using React, including state management and routing.
 - Integration of third-party libraries for interactive maps.
 - Implementation of user authentication and protected routes.
 - Effective use of lazy loading for improved performance.
