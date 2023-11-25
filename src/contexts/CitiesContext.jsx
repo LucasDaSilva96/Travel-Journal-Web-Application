@@ -1,3 +1,4 @@
+// Importing necessary components and hooks from react
 import {
   createContext,
   useCallback,
@@ -5,10 +6,14 @@ import {
   useEffect,
   useReducer,
 } from "react";
-import CITIES from "../data/Data";
 
+// Importing functions to interact with local storage from the data module
+import { getLocalStorage, setLocalStorage } from "../data/Data";
+
+// Creating a context for city-related data
 const CitiesContext = createContext();
 
+// Initial state for the city context
 const initialState = {
   cities: [],
   isLoading: false,
@@ -16,6 +21,7 @@ const initialState = {
   error: "",
 };
 
+// Reducer function to manage state based on actions
 function reducer(state, action) {
   switch (action.type) {
     case "loading":
@@ -62,23 +68,28 @@ function reducer(state, action) {
   }
 }
 
+// Provider component to manage city-related state
 function CitiesProvider({ children }) {
+  // Using useReducer hook to manage state and actions
   const [{ cities, isLoading, currentCity }, dispatch] = useReducer(
     reducer,
     initialState
   );
 
+  // Fetching city data on component mount
   useEffect(function () {
     function fetchCity() {
       dispatch({ type: "loading" });
 
+      // Simulating a delay for loading data
       setTimeout(() => {
-        dispatch({ type: "cities/loaded", payload: CITIES });
+        dispatch({ type: "cities/loaded", payload: getLocalStorage() });
       }, 1500);
     }
     fetchCity();
   }, []);
 
+  // Function to get a specific city by ID
   const getCity = useCallback(
     (id) => {
       let ID;
@@ -88,6 +99,7 @@ function CitiesProvider({ children }) {
         ID = Number(id);
       }
 
+      // Checking if the current city matches the requested ID
       if (Object.keys(currentCity).length > 0) {
         if (currentCity.id.toString() === id) {
           const data = cities.find((el) => el.id === ID);
@@ -96,6 +108,7 @@ function CitiesProvider({ children }) {
         }
       }
 
+      // Fetching the city data and updating the state
       dispatch({ type: "loading" });
       const data = cities.find((el) => el.id === ID);
       setTimeout(() => {
@@ -105,18 +118,23 @@ function CitiesProvider({ children }) {
     [currentCity, cities]
   );
 
+  // Function to delete a city by ID
   function deleteCity(id) {
     dispatch({ type: "loading" });
 
+    // Filtering out the deleted city and updating the state
     const citiesArray = cities.filter(
       (city) => city.id.toString() !== id.toString()
     );
 
+    // Simulating a delay for updating data and local storage
     setTimeout(() => {
       dispatch({ type: "city/deleted", payload: citiesArray });
+      setLocalStorage(citiesArray);
     }, 1500);
   }
 
+  // Providing the city-related context to the components
   return (
     <CitiesContext.Provider
       value={{
@@ -133,6 +151,7 @@ function CitiesProvider({ children }) {
   );
 }
 
+// Custom hook to access the city-related context
 function useCities() {
   const context = useContext(CitiesContext);
   if (context === undefined)
@@ -140,4 +159,5 @@ function useCities() {
   return context;
 }
 
+// Exporting the CitiesProvider and useCities for external use
 export { CitiesProvider, useCities };
