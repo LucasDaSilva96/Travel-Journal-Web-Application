@@ -6,38 +6,38 @@
 
 ## Key Features:
 
-Markup : # User Authentication: #
+# User Authentication:
 
 - The app incorporates user authentication, allowing users to log in securely with a fake authentication context.
 
 - Authenticated users gain access to personalized features and data storage.
 
-Markup : # Interactive Map: #
+# Interactive Map:
 
 - The application features an interactive map using the React Leaflet library, displaying markers for each city in the user's travel journal.
 - Users can click on map markers to view city details and navigate to the city's Wikipedia page.
 
-Markup : # Dynamic Routing: #
+# Dynamic Routing:
 
 - Utilizing React Router, the app supports dynamic routing, enabling users to access specific pages such as the home page, pricing, product information, and user login.
 
-Markup : # Lazy Loading: #
+# Lazy Loading:
 
 - The app implements lazy loading for improved performance, loading components only when needed, and incorporating a spinner for a seamless user experience.
 
-Markup : # Data Persistence: #
+# Data Persistence:
 
 - The app employs local storage for data persistence, ensuring that user travel data is saved even after closing and reopening the application.
 
-Markup : # Protected Routes: #
+# Protected Routes:
 
 - The application incorporates protected routes, ensuring that certain pages are accessible only to authenticated users. Unauthorized users are redirected to the login page.
 
-Markup : # Form Integration: #
+# Form Integration:
 
 - Users can add new entries to their travel journal using a form that automatically populates location details based on the user's geolocation or map click.
 
-Markup : # Context API Usage: #
+# Context API Usage:
 
 - The React Context API is employed to manage global state, facilitating seamless communication between components and enhancing the scalability of the application.
 
